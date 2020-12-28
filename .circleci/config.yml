@@ -1,0 +1,37 @@
+version: 2.1
+orbs:
+  gcp-cli: circleci/gcp-cli@2.1.0
+jobs:
+  test:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pip install -r requirements-dev.txt && pip install -r requirements.txt
+      - run:
+          name: Lint
+          command: pylint --disable=C0114,C0116 main.py
+  deploy:
+    docker:
+      - image: circleci/python:3.8
+    steps:
+      - checkout
+      - gcp-cli/install
+      - gcp-cli/initialize
+      - run:
+          name: Deploy Cloud Function
+          command: gcloud functions deploy post_scraper --trigger-topic crawled-post --runtime python38 --set-env-vars=GOOGLE_CLOUD_PROJECT=$GOOGLE_PROJECT
+workflows:
+  build:
+    jobs:
+      - test
+      - deploy:
+          requires:
+            - test
+          context: PROD
+          filters:
+            branches:
+              only:
+                - master
