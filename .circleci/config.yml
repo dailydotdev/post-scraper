@@ -13,6 +13,9 @@ jobs:
       - run:
           name: Lint
           command: pylint --disable=C0114,C0116 main.py
+      - run:
+          name: Test
+          command: pytest
   deploy:
     docker:
       - image: circleci/python:3.8
@@ -34,4 +37,4 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
