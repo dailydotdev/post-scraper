@@ -16,13 +16,11 @@ PROJECT_ID = os.getenv('GOOGLE_CLOUD_PROJECT')
 
 # Publishes a message to a Cloud Pub/Sub topic.
 def publish(topic_name, data):
-    # References an existing topic
-    topic_path = publisher.topic_path(PROJECT_ID, topic_name)
+    topic_path = publisher.topic_path(PROJECT_ID, topic_name)  # pylint: disable=no-member
 
     message_json = json.dumps(data)
     message_bytes = message_json.encode('utf-8')
 
-    # Publishes a message
     publish_future = publisher.publish(topic_path, data=message_bytes)
     publish_future.result()  # Verify the publish succeeded
 
