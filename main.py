@@ -2,15 +2,17 @@ import base64
 import json
 import os
 import nltk
+from google.auth.exceptions import DefaultCredentialsError
+from google.cloud import pubsub_v1
 from newspaper import Article, ArticleException
 from retry import retry
 
-from google.cloud import pubsub_v1
-
 nltk.download('punkt')
 
-# Instantiates a Pub/Sub client
-publisher = pubsub_v1.PublisherClient()
+try:
+    publisher = pubsub_v1.PublisherClient()
+except DefaultCredentialsError:  # For testing purposes
+    pass
 PROJECT_ID = os.getenv('GOOGLE_CLOUD_PROJECT')
 
 
