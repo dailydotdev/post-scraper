@@ -4,7 +4,7 @@ import os
 import nltk
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import pubsub_v1
-from newspaper import Article, ArticleException
+from newspaper import Article, ArticleException, Config
 from retry import retry
 
 nltk.download('punkt')
@@ -29,7 +29,10 @@ def publish(topic_name, data):
 
 @retry(ArticleException, tries=5, delay=1, backoff=2, max_delay=10)
 def download_article(url):
-    article = Article(url)
+    config = Config()
+    config.follow_meta_refresh = True
+    config.keep_article_html = True
+    article = Article(url, config=config)
     article.download()
     return article
 
@@ -41,5 +44,9 @@ def post_scraper(event, _):
         article = download_article(data['url'])
         article.parse()
         article.nlp()
-        data['keywords'] = article.keywords
+        lang = article.meta_lang
+        if lang in ('en', ''):
+            data['keywords'] = article.keywords
+        else:
+            print(f'[{data["id"]}] not extracting keywords (lang={lang} url={data["url"]})')
         publish('post-keywords-extracted', data)

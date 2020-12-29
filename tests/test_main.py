@@ -23,3 +23,12 @@ def test_post_scraper_not_available(mocker):
     except ArticleException:
         pass
     assert not publish.called, 'method should not have been called'
+
+
+def test_post_scraper_ignore_non_english(mocker):
+    payload = {'id': '1', 'url': 'https://engineerteam.note.jp/n/n2504ddfe61c7',
+               'publicationId': 'pub'}
+    event = {'data': base64.b64encode(json.dumps(payload).encode('utf-8'))}
+    publish = mocker.patch('main.publish')
+    post_scraper(event, None)
+    publish.assert_called_once_with('post-keywords-extracted', payload)
