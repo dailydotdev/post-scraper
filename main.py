@@ -1,16 +1,13 @@
 import base64
 import json
 import os
-import nltk
 import spacy
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import pubsub_v1
 from newspaper import Article, ArticleException, Config
 from retry import retry
+import pke
 
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('universal_tagset')
 spacy.cli.download('en')
 
 try:
@@ -42,8 +39,6 @@ def download_article(url):
 
 
 def extract_keywords(url):
-    import pke
-
     article = download_article(url)
     article.parse()
     lang = article.meta_lang
