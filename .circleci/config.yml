@@ -27,14 +27,12 @@ jobs:
       - gcp-cli/initialize
       - run:
           name: Deploy Cloud Function
-          command: gcloud functions deploy post_scraper --trigger-topic crawled-post --runtime python38 --set-env-vars=GOOGLE_CLOUD_PROJECT=$GOOGLE_PROJECT,NLTK_DATA=./nltk_data
+          command: gcloud functions deploy post_scraper --trigger-topic crawled-post --runtime python38 --memory=512MB --set-env-vars=GOOGLE_CLOUD_PROJECT=$GOOGLE_PROJECT,NLTK_DATA=./nltk_data
 workflows:
   build:
     jobs:
       - test
       - deploy:
-          requires:
-            - test
           context: PROD
           filters:
             branches:
