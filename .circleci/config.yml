@@ -14,6 +14,9 @@ jobs:
           name: Lint
           command: pylint --disable=C0114,C0116 main.py
       - run:
+          name: Download data
+          command: python -m nltk.downloader punkt && python -m nltk.downloader stopwords && python -m nltk.downloader universal_tagset && python -m spacy download en
+      - run:
           name: Test
           command: pytest
   deploy:

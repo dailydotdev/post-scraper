@@ -5,9 +5,14 @@ import nltk
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import pubsub_v1
 from newspaper import Article, ArticleException, Config
+import pke
+import spacy
 from retry import retry
 
 nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('universal_tagset')
+spacy.cli.download('en')
 
 try:
     publisher = pubsub_v1.PublisherClient()
@@ -37,16 +42,30 @@ def download_article(url):
     return article
 
 
+def extract_keywords(url):
+    article = download_article(url)
+    article.parse()
+    lang = article.meta_lang
+    if lang in ('en', ''):
+        article.nlp()
+
+        extractor = pke.unsupervised.YAKE()
+        extractor.load_document(input=article.title + '\n' + article.text, language='en')
+        extractor.candidate_selection()
+        extractor.candidate_weighting()
+        keyphrases = extractor.get_n_best(n=10)
+
+        return article.keywords + [phrase.replace(' ', '-') for (phrase, score) in keyphrases]
+    return None
+
+
 def post_scraper(event, _):
     if 'data' in event:
         data = json.loads(base64.b64decode(event['data']).decode('utf-8'))
         print(f'[{data["id"]}] scraping {data["url"]}')
-        article = download_article(data['url'])
-        article.parse()
-        article.nlp()
-        lang = article.meta_lang
-        if lang in ('en', ''):
-            data['keywords'] = article.keywords
+        keywords = extract_keywords(data['url'])
+        if keywords is not None:
+            data['keywords'] = keywords
         else:
-            print(f'[{data["id"]}] not extracting keywords (lang={lang} url={data["url"]})')
+            print(f'[{data["id"]}] non-english content (url={data["url"]})')
         publish('post-keywords-extracted', data)
