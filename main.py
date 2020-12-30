@@ -1,6 +1,5 @@
 import base64
 import json
-import os
 import spacy
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import pubsub_v1
