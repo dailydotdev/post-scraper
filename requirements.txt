@@ -4,4 +4,4 @@ nltk==3.5
 retry==0.9.2
 spacy==2.3.5
 git+https://github.com/boudinfl/pke.git#pke==1.8.1
-https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.2.0/en_core_web_sm-2.2.0.tar.gz#egg=en_core_web_sm
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.3.0/en_core_web_sm-2.3.0.tar.gz#egg=en_core_web_sm
