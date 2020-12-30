@@ -2,11 +2,10 @@ import base64
 import json
 import os
 import nltk
+import spacy
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import pubsub_v1
 from newspaper import Article, ArticleException, Config
-import pke
-import spacy
 from retry import retry
 
 nltk.download('punkt')
@@ -43,6 +42,8 @@ def download_article(url):
 
 
 def extract_keywords(url):
+    import pke
+
     article = download_article(url)
     article.parse()
     lang = article.meta_lang
