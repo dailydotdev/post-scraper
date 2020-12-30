@@ -1,17 +1,13 @@
+import os
 import base64
 import json
-import os
-import nltk
+import spacy
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import pubsub_v1
 from newspaper import Article, ArticleException, Config
-import pke
-import spacy
 from retry import retry
+import pke
 
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('universal_tagset')
 spacy.cli.download('en')
 
 try:
