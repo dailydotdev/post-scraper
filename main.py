@@ -46,9 +46,9 @@ def extract_keywords(url):
         extractor.load_document(input=article.title + '\n' + article.text, language='en')
         extractor.candidate_selection()
         extractor.candidate_weighting()
-        keyphrases = extractor.get_n_best(n=10)
+        keyphrases = [phrase.replace(' ', '-') for (phrase, score) in extractor.get_n_best(n=10)]
 
-        return article.keywords + [phrase.replace(' ', '-') for (phrase, score) in keyphrases]
+        return list(dict.fromkeys(article.keywords + keyphrases))
     return None
 
 
