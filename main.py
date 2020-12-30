@@ -1,14 +1,11 @@
 import os
 import base64
 import json
-import spacy
 from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import pubsub_v1
 from newspaper import Article, ArticleException, Config
 from retry import retry
 import pke
-
-spacy.cli.download('en')
 
 try:
     publisher = pubsub_v1.PublisherClient()
