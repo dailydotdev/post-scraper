@@ -47,8 +47,9 @@ def extract_keywords(url):
         extractor.candidate_selection()
         extractor.candidate_weighting()
         keyphrases = [phrase.replace(' ', '-') for (phrase, score) in extractor.get_n_best(n=10)]
+        unique_keywords = list(dict.fromkeys(article.keywords + keyphrases))
 
-        return list(dict.fromkeys(article.keywords + keyphrases))
+        return [keyword for keyword in unique_keywords if 0 < len(keyword) < 30]
     return None
 
 
